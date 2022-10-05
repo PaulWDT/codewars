@@ -1,4 +1,4 @@
-package kata
+package main
 
 func Crossover(ns []int, xs []int, ys []int) ([]int, []int) {
 	xsout := []int{}
