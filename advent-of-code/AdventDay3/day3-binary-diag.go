@@ -44,8 +44,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
-	"strings"
 )
 
 func main() {
@@ -57,37 +55,40 @@ func main() {
 
 	scanner := bufio.NewScanner(file)
 	lineNum := 0
-	position, depth, aim := 0, 0, 0
+	bitCounts := []int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	//numBits := len(bitCounts)
 
 	for scanner.Scan() {
 		lineContent := scanner.Text()
 		lineNum++
-		fmt.Println(lineContent, " with state position,depth,aim :", position, depth, aim)
-		words := strings.Split(lineContent, " ")
-		value, _ := strconv.Atoi(words[1])
-		switch words[0] {
-		case "forward":
-			position += value
-			depth += value * aim
-		case "down":
-			aim += value
-		case "up":
-			aim -= value
-		default:
-			fmt.Println("bad token ! (first word of line is not forward nor down nor up)")
+		fmt.Print("line ", lineNum, " contains : ", lineContent)
+
+		for idx, val := range lineContent {
+			if val == '1' {
+				bitCounts[idx]++
+			}
 		}
-
-		/*		if err != nil {
-				fmt.Println("Error : strconv.Atoi(", lineContent, ") failed !")
-			} */
-
+		fmt.Println(" bitCounts :", bitCounts)
 	}
 
-	fmt.Println("Total number of steps =", lineNum)
-	fmt.Println("position, depth =", position, depth)
-	fmt.Println("multiply position * depth =", position*depth)
+	gamma := 0
+	for _, val := range bitCounts {
+		gamma *= 2
+		if val > lineNum/2 {
+			gamma += 1
+		}
+	}
 
-	if err := scanner.Err(); err != nil {
+	fmt.Println("Total number of lines =", lineNum)
+	fmt.Println("bitCounts", bitCounts)
+
+	//gamma := strconv.ParseInt(string,base,size)
+	fmt.Printf("gamma rate   = %d == %b ; ", gamma, gamma)
+	fmt.Printf("epsilon rate = %d == %b \n", 0xfff^gamma, 0xfff^gamma)
+
+	fmt.Println("gamma*epsilon =", gamma*(0xfff^gamma))
+
+	/*	if err := scanner.Err(); err != nil {
 		fmt.Println(err)
-	}
+	} */
 }
